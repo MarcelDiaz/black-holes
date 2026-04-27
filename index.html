@@ -225,8 +225,7 @@
                     </div>
                 </div>
                 <div class="relative">
-                    <!-- Es manté la crida amb el %20 perquè agafi l'arxiu pujat al costat -->
-                    <img src="accretion%20disk.jpg" onerror="this.src='https://images.unsplash.com/photo-1614732414444-098e5f1151a1?q=80&w=1000&auto=format&fit=crop'" alt="" class="rounded-2xl shadow-2xl shadow-blue-500/20 object-cover h-80 w-full">
+                    <img src="accretion disk.jpg" alt="" class="rounded-2xl shadow-2xl shadow-blue-500/20 object-cover h-80 w-full">
                     <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10"></div>
                     <p class="text-sm text-center text-gray-500 mt-2 italic">Anatomia d'una singularitat i el disc d'acreció.</p>
                 </div>
@@ -574,15 +573,13 @@
 
         // --- GEMINI API INTEGRATION ---
         
-        // ⚠️ IMPORTANT: Deixa això exactament com a "" per poder provar-ho dins de la previsualització.
-        // Si ho penges a GitHub, pots canviar aquest "" per la teva clau de Google dividida amb un '+'.
-        // Exemple: let apiKey = "AIzaSy" + "laMevaRestaDeClauAqui123";
-        let apiKey = "AIzaSyA9SnKiED8ICT" + "W9bcZdfWKFmk-GuP0ld9c";
+        // ⚠️ POSA LA TEVA CLAU API DE GOOGLE AI STUDIO AQUÍ ENTRE LES COMETES (PER A GITHUB PAGES) ⚠️
+        const apiKey = "AIzaSyA9SnKiED8ICT"+"W9bcZdfWKFmk-GuP0ld9c"; 
 
-        // TRUC PER EVITAR L'ERROR 404: 
-        // Quan l'aplicació detecti que has posat la teva pròpia clau (per a GitHub), 
-        // canviarà automàticament al model públic (gemini-1.5-flash) que tothom pot utilitzar.
-        const modelName = apiKey === "" ? "gemini-2.5-flash-preview-09-2025" : "gemini-1.5-flash";
+        // Selecció intel·ligent del model:
+        // L'entorn de previsualització d'aquest xat injecta la seva clau d'amagat, però requereix el model 'preview'.
+        // Si l'usuari posa la seva pròpia clau (per GitHub), fem servir el model estàndard (flash) perquè el 'preview' sol estar bloquejat.
+        const modelName = apiKey ? "gemini-2.5-flash" : "gemini-2.5-flash-preview-09-2025";
 
         async function explainToKids() {
             const resultDiv = document.getElementById('kids-explanation');
@@ -612,11 +609,17 @@
                             })
                         });
 
-                        if (!response.ok) throw new Error(`Error de connexió (${response.status}).`);
+                        if (!response.ok) {
+                            if (response.status === 400 || response.status === 403) {
+                                 throw new Error(`Error de permisos (${response.status}). Clau API incorrecta.`);
+                            }
+                            throw new Error(`Error de connexió (${response.status}).`);
+                        }
                         
                         result = await response.json();
                         break;
                     } catch (e) {
+                        if (e.message.includes("permisos")) throw e; // Aturem els reintents si és error de clau
                         retries--;
                         if (retries === 0) throw e;
                         await new Promise(r => setTimeout(r, delay)); delay *= 2;
@@ -630,7 +633,14 @@
                 }
             } catch (error) {
                 console.error("Error d'execució:", error);
-                resultDiv.innerHTML = `<span class="text-red-400">⚠️ Error: ${error.message}</span>`;
+                
+                let errorMsg = error.message;
+                // Comprovació especial per a usuaris de GitHub Pages
+                if (!apiKey && window.location.hostname.includes("github.io")) {
+                    errorMsg = "Obligatori anar al codi (línia 586) i enganxar la teva API Key entre les cometes perquè funcioni a GitHub Pages.";
+                }
+                
+                resultDiv.innerHTML = `<span class="text-red-400">⚠️ Error: ${errorMsg}</span>`;
             }
         }
 
@@ -671,11 +681,17 @@
                             })
                         });
 
-                        if (!response.ok) throw new Error(`Error de connexió (${response.status}).`);
+                        if (!response.ok) {
+                            if (response.status === 400 || response.status === 403) {
+                                 throw new Error(`Error de permisos (${response.status}). Clau API incorrecta.`);
+                            }
+                            throw new Error(`Error de connexió (${response.status}).`);
+                        }
                         
                         result = await response.json();
                         break; 
                     } catch (e) {
+                        if (e.message.includes("permisos")) throw e; // Aturem els reintents si és error de clau
                         retries--;
                         if (retries === 0) throw e;
                         await new Promise(r => setTimeout(r, delay)); delay *= 2;
@@ -691,7 +707,14 @@
                 }
             } catch (error) {
                 console.error("Error d'execució:", error);
-                contentDiv.innerHTML = `<span class="text-red-400">⚠️ Error: ${error.message}</span>`;
+                
+                let errorMsg = error.message;
+                // Comprovació especial per a usuaris de GitHub Pages
+                if (!apiKey && window.location.hostname.includes("github.io")) {
+                    errorMsg = "Obligatori anar al codi (línia 586) i enganxar la teva API Key entre les cometes perquè funcioni a GitHub Pages.";
+                }
+                
+                contentDiv.innerHTML = `<span class="text-red-400">⚠️ Error: ${errorMsg}</span>`;
             } finally {
                 loadingDiv.classList.add('hidden');
                 resultDiv.classList.remove('hidden');
