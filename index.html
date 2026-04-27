@@ -225,7 +225,8 @@
                     </div>
                 </div>
                 <div class="relative">
-                    <img src="accretion disk.jpg" alt="" class="rounded-2xl shadow-2xl shadow-blue-500/20 object-cover h-80 w-full">
+                    <!-- He posat %20 per assegurar que GitHub no trenqui el nom de l'arxiu si té espais -->
+                    <img src="accretion%20disk.jpg" onerror="this.src='https://images.unsplash.com/photo-1614732414444-098e5f1151a1?q=80&w=1000&auto=format&fit=crop'" alt="" class="rounded-2xl shadow-2xl shadow-blue-500/20 object-cover h-80 w-full">
                     <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10"></div>
                     <p class="text-sm text-center text-gray-500 mt-2 italic">Anatomia d'una singularitat i el disc d'acreció.</p>
                 </div>
@@ -573,8 +574,9 @@
 
         // --- GEMINI API INTEGRATION ---
         
-        // Aquesta és la configuració clau: s'ha de deixar totalment en blanc perquè l'entorn de previsualització faci la seva pròpia màgia.
-        const apiKey = "AIzaSyAX6CS9JFP7wSnb6mqZG6GuZZKzc4xEYPY"; 
+        // Per GitHub Pages: HAS d'enganxar la teva clau entre les cometes just a sota per fer que l'IA funcioni online.
+        // Exemple: const apiKey = "AIzaSyCXxxxxxxYyyyyyZzzzzzzz";
+        const apiKey = "AIzaSyBhJiNu4OUCwI8r_gpw8qVzXbL8yTA_wDo"; 
 
         async function explainToKids() {
             const resultDiv = document.getElementById('kids-explanation');
@@ -626,7 +628,7 @@
                 }
             } catch (error) {
                 console.error("Error d'execució:", error);
-                resultDiv.innerHTML = `<span class="text-red-400">Error en el sistema d'intel·ligència artificial. Disculpa les molèsties.</span>`;
+                resultDiv.innerHTML = `<span class="text-red-400">Error en el sistema d'intel·ligència artificial. Disculpa les molèsties. Recorda posar l'API Key al codi si ets a GitHub.</span>`;
             }
         }
 
@@ -691,7 +693,7 @@
                 }
             } catch (error) {
                 console.error("Error d'execució:", error);
-                contentDiv.innerHTML = `<span class="text-red-400">Error en el càlcul de la simulació de la intel·ligència artificial.</span>`;
+                contentDiv.innerHTML = `<span class="text-red-400">Error en el càlcul de la simulació. Recorda posar l'API Key al codi si ets a GitHub.</span>`;
             } finally {
                 loadingDiv.classList.add('hidden');
                 resultDiv.classList.remove('hidden');
